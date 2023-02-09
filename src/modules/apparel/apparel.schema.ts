@@ -2,7 +2,7 @@ import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
 
 /**
- * Wallet Schemas
+ * Apparel Schemas
  */
 const SizeEnum = z.enum(["xs", "s", "m", "l", "xl", "xxl"]);
 const Quality = z.enum(["I", "II", "III"]);

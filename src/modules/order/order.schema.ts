@@ -2,33 +2,35 @@ import { z } from "zod";
 import { buildJsonSchemas } from "fastify-zod";
 
 /**
- * Wallet Schemas
+ * Order Schemas
  */
-const order = {
-  id: z.string(),
-  name: z.string(),
-  date: z.date(),
-  balance: z.number(),
-};
 
+const SizeEnum = z.enum(["xs", "s", "m", "l", "xl", "xxl"]);
 const createOrderSchema = z.object({
-  name: z.string({
-    required_error: "Name is required",
-    invalid_type_error: "Name must be a string",
+  code: z.string({
+    required_error: "code is required",
+    invalid_type_error: "code must be a string",
   }),
-  balance: z.number().default(0),
+  size: SizeEnum.default("m"),
+  quantity: z.number().default(0),
 });
 
-const orderResponseSchema = z.object({
-  ...order,
-});
+const checkOrderResponseSchema = z.boolean().default(false);
+const lowCostOrderResponseSchema = z.number().default(0);
+const createOrderSchemaList = z.array(createOrderSchema);
 
 export type CreateOrderSchema = z.infer<typeof createOrderSchema>;
-
+export type CreateOrderSchemaList = z.infer<typeof createOrderSchemaList>;
+export type CheckOrderResponseSchema = z.infer<typeof checkOrderResponseSchema>;
+export type LowCostOrderResponseSchema = z.infer<
+  typeof lowCostOrderResponseSchema
+>;
 export const { schemas: orderSchemas, $ref } = buildJsonSchemas(
   {
     createOrderSchema,
-    orderResponseSchema,
+    createOrderSchemaList,
+    checkOrderResponseSchema,
+    lowCostOrderResponseSchema,
   },
   {
     $id: "orderSchemas",

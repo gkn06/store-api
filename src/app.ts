@@ -1,5 +1,4 @@
 import Fastify from "fastify";
-import { usersData } from "../mockData";
 import cors from "@fastify/cors";
 import { appConfig } from "./config";
 import { orderSchemas } from "./modules/order/order.schema";
@@ -44,10 +43,6 @@ async function buildServer() {
 
   server.get("/ping", async (_request, _reply) => {
     return "pong\n";
-  });
-
-  server.get("/users", async () => {
-    return usersData;
   });
 
   return server;

@@ -1,51 +1,49 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateOrderSchema } from "./order.schema";
-import { createOrder, getOrder } from "./order.service";
+import { CreateOrderSchemaList } from "./order.schema";
+import { checkOrder, findCheap } from "./order.service";
 
-export async function createOrderHandler(
+export async function checkOrderHandler(
   request: FastifyRequest<{
-    Body: CreateOrderSchema;
+    Body: CreateOrderSchemaList;
   }>,
   reply: FastifyReply
 ) {
-  const { name, balance = 0 } = request.body;
+  const orders = request.body;
 
-  if (!name) {
+  if (!orders.every((order) => order.code)) {
     return reply.code(400).send({
       error: "missing input parameters",
     });
   }
 
-  const [err, order] = await request.to(
-    createOrder(request, { name, balance })
-  );
+  const [err, order] = await request.to(checkOrder(request, orders));
 
   if (err) {
-    request.log.error(err, "Error in creating a Order");
+    request.log.error(err, "Error in checking the order eligibility");
     return reply.code(500).send(err);
   }
 
   return reply.code(200).send(order);
 }
 
-export async function getOrderHandler(
+export async function findCheapOrderHandler(
   request: FastifyRequest<{
-    Params: { id: string };
+    Body: CreateOrderSchemaList;
   }>,
   reply: FastifyReply
 ) {
-  const id = request.params.id;
+  const orders = request.body;
 
-  if (!id) {
+  if (!orders.every((order) => order.code)) {
     return reply.code(400).send({
-      message: "Missing Order id",
+      error: "missing input parameters",
     });
   }
 
-  const [err, order] = await request.to(getOrder(request, id));
+  const [err, order] = await request.to(findCheap(request, orders));
 
   if (err) {
-    request.log.error(err, `Error in fetching Order with id: ${id}`);
+    request.log.error(err, "Error in checking the order eligibility");
     return reply.code(500).send(err);
   }
 

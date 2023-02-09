@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { createOrderHandler, getOrderHandler } from "./order.controller";
+import { checkOrderHandler, findCheapOrderHandler } from "./order.controller";
 import { $ref } from "./order.schema";
 
 async function orderRoutes(server: FastifyInstance) {
@@ -7,37 +7,37 @@ async function orderRoutes(server: FastifyInstance) {
     "/check-order",
     {
       schema: {
-        body: $ref("createOrderSchema"),
+        body: $ref("createOrderSchemaList"),
         description: "Check If order requirement can be fulfilled.",
         response: {
           200: {
-            ...$ref("orderResponseSchema"),
+            ...$ref("checkOrderResponseSchema"),
             description: "Successful response",
           },
         },
         tags: ["Order"],
       },
     },
-    createOrderHandler
+    checkOrderHandler
   );
 
   server.post(
     "/find-low",
     {
       schema: {
-        body: $ref("createOrderSchema"),
+        body: $ref("createOrderSchemaList"),
         description:
           "Find the lowest at which the order requirement can be fulfilled.",
         response: {
           200: {
-            ...$ref("orderResponseSchema"),
+            ...$ref("lowCostOrderResponseSchema"),
             description: "Successful response",
           },
         },
         tags: ["Order"],
       },
     },
-    createOrderHandler
+    findCheapOrderHandler
   );
 }
 
